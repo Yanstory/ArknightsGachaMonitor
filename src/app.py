@@ -13,14 +13,25 @@ sys.setdefaultencoding('utf-8')
 app = Flask(__name__)
 
 # 常量部分
-startAdd = 50  # 保底数量(修改为0时无保底)
-percentageSSSR = 2  # 六星概率
-percentageSSSRAdd = 2  # 保底概率增加
-percentageSSR = 8  # 五星概率
-percentageSR = 50  # 四星概率
-chanceUp = [[], [], [], []]  # 特殊UP活动,分别对应3、4、5、6
-selfDefined = False  # 自定义抽卡数据，当此项设为True时随机抽卡功能无效
-selfDefinedList = []  # 自定义抽卡数据，填入干员ID，不知道的可访问127.0.0.1:5000/showDb查看。一定要填满十个！
+# 保底数量(修改为0时无保底)
+startAdd = 50
+# 抽出概率，依次为：六星，六星保底概率增加，五星，四星
+percentageSSSR = 2
+percentageSSSRAdd = 2
+percentageSSR = 8
+percentageSR = 50
+# 特殊UP活动,分别对应3、4、5、6
+chanceUp = [[], [], [], []]
+# 自定义抽卡数据，当此项设为True时随机抽卡功能无效
+selfDefined = False
+# 自定义的抽卡数据干员ID，可在127.0.0.1:5000/showDb中查询。一定要填满十个！
+selfDefinedList = []
+# 是否允许抽出特定干员，默认False表示不抽出
+allowLimitOp = False
+# 特定干员列表，包括公招限定、特别赠送、活动限定
+limitOpList = ['estell', 'tiger', 'hpsts',
+               'savage', 'amiya',
+               'grani', 'ceylon', 'bison']
 
 # 传输格式常量
 dataResponse = {"gachaResultList": [], "playerDataDelta": {}}
@@ -53,9 +64,18 @@ def db_init():
             if rarity > 1:
                 if key.startswith('token'):  # 前缀检测，防止召唤物导致结果异常
                     continue
+                if not(allowLimitOp):  # 禁止特定干员检测
+                    flagFound = False
+                    for op in limitOpList:
+                        if key.endswith(op):    # 后缀检测
+                            flagFound = True
+                            break
+                    if flagFound: continue
+                '''
                 if key.endswith('estell') or key.endswith('savage') or key.endswith('grani') or key.endswith(
                         'tiger') or key.endswith('hpsts') or key.endswith('amiya'):  # 后缀检测，去除公招限定
                     continue
+                '''
                 listR[rarity - 2].append(key)
                 listName[rarity - 2].append(value['name'])
                 listCount[rarity - 2].append(0)
@@ -186,12 +206,12 @@ def verifyAccount():
 def print_db():
     output = '''<!DOCTYPE html>
     <html>
-    <head> 
-    <meta charset="utf-8" /> 
-    <title>干员列表</title> 
-    </head> 
-    <body> 
-    
+    <head>
+    <meta charset="utf-8" />
+    <title>干员列表</title>
+    </head>
+    <body>
+
     '''
     rare_list = ['三星', '四星', '五星', '六星']
     for i in range(4):

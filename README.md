@@ -30,12 +30,15 @@ python app.py
 ### 指定抽取概率
 通过notepad++，sublime text或类似软件打开python文件，将常量部分下
 ```python
-startAdd = 50  # 保底数量(修改为0时无保底)
-percentageSSSR = 2  # 六星概率
-percentageSSSRAdd = 2  # 保底概率增加
-percentageSSR = 8  # 五星概率
-percentageSR = 50  # 四星概率
-chanceUp = [[], [], [], []]  # 特殊UP活动,分别对应3、4、5、6
+# 保底数量(修改为0时无保底)
+startAdd = 50
+# 抽出概率，依次为：六星，六星保底概率增加，五星，四星
+percentageSSSR = 2
+percentageSSSRAdd = 2
+percentageSSR = 8
+percentageSR = 50
+# 特殊UP活动,分别对应3、4、5、6
+chanceUp = [[], [], [], []]
 ```
 分别按注释改为需要的值。UP出率默认为占同星级中的50%
 
@@ -51,6 +54,25 @@ selfDefined = True
 selfDefinedList = ['charid']
 ```
 注意：charid为角色ID，具体对应可启动程序后通过浏览器访问['http://127.0.0.1:5000/showDb](http://127.0.0.1:5000/showDb)页面查看，一定要填满十个ID否则程序将出错。
+
+### 抽取限定干员
+
+**注意：**由于限定干员不可能抽取，因此正常情况下出现在十连界面是不可能的！
+
+通过notepad++，sublime text或类似软件打开python文件，将常量部分下
+
+```python
+allowLimitOp = False
+```
+
+改为
+
+```python
+allowLimitOp = True
+```
+
+即可在寻访模拟器中抽取到下方 ``limitOpList`` 中的干员（包括：公招限定，活动限定，特殊获取的干员）
+
 ## 样例
 以下是模拟全六星的截图
 ![example1](https://github.com/guch8017/ArknightsGachaMonitor/raw/master/images/example1.png)
@@ -68,7 +90,9 @@ selfDefinedList = ['charid']
 ### 0.0.3
 ~~貌似可以抽出暴行，阿米娅。。。~~
 
-已经加入后缀检测，去除不能在寻访中出现的干员
+~~已经加入后缀检测，去除不能在寻访中出现的干员~~
+
+加入了一个开关，可以自定义是否能够抽取了
 
 ## Bugs&Todos
 
